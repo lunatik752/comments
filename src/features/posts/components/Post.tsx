@@ -1,22 +1,25 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useCallback, useState} from 'react';
 import {PostType} from "../../../api/api";
 import {useDispatch} from "react-redux";
 import {updatePosts} from "../bll/reducer";
 
 
-export const Post: React.FC<{ post: PostType }> = ({post}) => {
+export const Post: React.FC<{ post: PostType }> = React.memo(({post}) => {
+
+    console.log(post)
 
     const [editMode, setEditMode] = useState(false)
     const [text, setText] = useState(post.text)
     const dispatch = useDispatch()
 
-    const changeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const changeText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.currentTarget.value)
-    }
-    const onBlurHandle = () => {
+    }, [])
+
+    const onBlurHandle = useCallback(() => {
         dispatch(updatePosts(post.id, text))
         setEditMode(false)
-    }
+    }, [dispatch, post.id, text])
 
     return (
         <div>
@@ -25,12 +28,13 @@ export const Post: React.FC<{ post: PostType }> = ({post}) => {
             {!editMode
                 ? <span onDoubleClick={() => setEditMode(true)}>{post.text}</span>
                 : <textarea
+                    value={text}
                     onChange={changeText}
-                    onBlur={onBlurHandle}>{text}</textarea>}
+                    onBlur={onBlurHandle}/>}
             <br/>
             Likes: {post.likes}
             <hr/>
         </div>
     );
-}
+})
 
