@@ -1,12 +1,12 @@
 import React, {ChangeEvent, useCallback, useState} from 'react';
-import {PostType} from "../../../api/api";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {updatePosts} from "../bll/reducer";
+import {AppStateType} from "../../../state/store";
 
 
-export const Post: React.FC<{ post: PostType }> = React.memo(({post}) => {
+export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
 
-    console.log(post)
+    const post = useSelector((state: AppStateType) => state.posts.byId[postId])
 
     const [editMode, setEditMode] = useState(false)
     const [text, setText] = useState(post.text)
