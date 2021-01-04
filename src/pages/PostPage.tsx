@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Post} from "../features/posts/components/Post";
 import {AppStateType} from "../state/store";
-import {fetchPosts} from "../features/posts/bll/reducer";
+import {fetchPosts} from "../features/posts/bll/posts-reducer";
 
 export const PostPage: React.FC = () => {
 

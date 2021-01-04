@@ -1,12 +1,13 @@
 import React, {ChangeEvent, useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {updatePosts} from "../bll/reducer";
+import {updatePosts} from "../bll/posts-reducer";
 import {AppStateType} from "../../../state/store";
 
 
 export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
 
     const post = useSelector((state: AppStateType) => state.posts.byId[postId])
+    const author = useSelector((state: AppStateType) => state.authors.byId[post.authorId])
 
     const [editMode, setEditMode] = useState(false)
     const [text, setText] = useState(post.text)
@@ -23,7 +24,7 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
 
     return (
         <div>
-            <b>{post.author.name}</b>
+            <b>{author.name}</b>
             <br/>
             {!editMode
                 ? <span onDoubleClick={() => setEditMode(true)}>{post.text}</span>
