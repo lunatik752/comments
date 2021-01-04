@@ -1,12 +1,9 @@
-import {api, AuthorApiType, PostApiType} from "../../../api/api";
-import {Dispatch} from "redux";
+import {api, AuthorApiType} from "../../../api/api";
 import {fetchPostSuccess, mapToLookupTable} from "./posts-reducer";
-
+import {Dispatch} from "redux";
 
 
 const initialState = {
-    // items: [] as PostType[],
-    // allIds: [] as number[],
     byId: {} as {[key: string]: AuthorApiType}
 }
 
@@ -17,23 +14,30 @@ export const authorReducer = (state = initialState, action: PostReducerActionsTy
         case "FETCH_POST_SUCCESS": {
             return {
                 ...state,
-                // allIds: action.payload.posts.map(p => p.author.id),
                 byId: mapToLookupTable(action.payload.posts.map(p => p.author))
             }
         }
-        /*case "UPDATE_POST_SUCCESS": {
+        case "UPDATE_AUTHOR_SUCCESS": {
             return {
                 ...state,
                 byId: {
                     ...state.byId,
-                    [action.payload.postId]: {...state.byId[action.payload.postId], text: action.payload.text}
+                    [action.payload.authorID]: {...state.byId[action.payload.authorID], name: action.payload.authorName}
                 },
-                // items: state.items.map(i => i.id === action.payload.postId ? {...i, text: action.payload.text} : i)
             }
-        }*/
+        }
     }
     return state
 }
 
-type PostReducerActionsType = ReturnType<typeof fetchPostSuccess>
+type PostReducerActionsType = ReturnType<typeof fetchPostSuccess> | ReturnType<typeof updateAuthorSuccess>
 
+export const updateAuthorSuccess = (authorID: number, authorName: string) => ({
+    type: 'UPDATE_AUTHOR_SUCCESS',
+    payload: {authorID, authorName}
+} as const)
+
+export const updateAuthor = (authorId: number, authorName: string) => async (dispatch: Dispatch) => {
+    const result = await api.updateAuthor(authorId, authorName)
+    dispatch(updateAuthorSuccess(authorId, authorName))
+}

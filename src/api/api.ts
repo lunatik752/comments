@@ -41,6 +41,9 @@ export const api = {
         })
     },
     updatePost(postId: number, text: string) {
-return Promise.resolve({})
+        return Promise.resolve({})
+    },
+    updateAuthor(authorId: number, authorName: string) {
+        return Promise.resolve({})
     }
 }

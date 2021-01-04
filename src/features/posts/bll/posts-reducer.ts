@@ -79,7 +79,7 @@ export const fetchPosts = () => async (dispatch: Dispatch) => {
     const posts = await api.getPosts()
     dispatch(fetchPostSuccess(posts))
 }
-export const updatePosts = (postId: number, text: string) => async (dispatch: Dispatch) => {
+export const updatePost = (postId: number, text: string) => async (dispatch: Dispatch) => {
     const result = await api.updatePost(postId, text)
     dispatch(updatePostSuccess(postId, text))
 }

@@ -1,7 +1,8 @@
 import React, {ChangeEvent, useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {updatePosts} from "../bll/posts-reducer";
+import {updatePost} from "../bll/posts-reducer";
 import {AppStateType} from "../../../state/store";
+import { updateAuthor } from '../bll/authors-reducer';
 
 
 export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
@@ -24,15 +25,14 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
     }, [])
 
     const updatePostText = useCallback(() => {
-        dispatch(updatePosts(post.id, commentText))
+        dispatch(updatePost(post.id, commentText))
         setEditModeComment(false)
     }, [dispatch, post.id, commentText])
 
     const updateAuthorName = useCallback(() => {
-        // dispatch(updatePosts(post.id, commentText))
-        console.log(authorName)
+        dispatch(updateAuthor(author.id, authorName))
         setEditModeAuthor(false)
-    }, [authorName])
+    }, [dispatch, author.id, authorName])
 
     return (
         <div>
