@@ -9,29 +9,48 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
     const post = useSelector((state: AppStateType) => state.posts.byId[postId])
     const author = useSelector((state: AppStateType) => state.authors.byId[post.authorId])
 
-    const [editMode, setEditMode] = useState(false)
-    const [text, setText] = useState(post.text)
+    const [editModeComment, setEditModeComment] = useState(false)
+    const [editModeAuthor, setEditModeAuthor] = useState(false)
+    const [commentText, setCommentText] = useState(post.text)
+    const [authorName, setAuthorName] = useState(author.name)
     const dispatch = useDispatch()
 
-    const changeText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-        setText(e.currentTarget.value)
+    const changeCommentText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+        setCommentText(e.currentTarget.value)
     }, [])
 
-    const onBlurHandle = useCallback(() => {
-        dispatch(updatePosts(post.id, text))
-        setEditMode(false)
-    }, [dispatch, post.id, text])
+    const changeAuthorName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        setAuthorName(e.currentTarget.value)
+    }, [])
+
+    const updatePostText = useCallback(() => {
+        dispatch(updatePosts(post.id, commentText))
+        setEditModeComment(false)
+    }, [dispatch, post.id, commentText])
+
+    const updateAuthorName = useCallback(() => {
+        // dispatch(updatePosts(post.id, commentText))
+        console.log(authorName)
+        setEditModeAuthor(false)
+    }, [authorName])
 
     return (
         <div>
-            <b>{author.name}</b>
+            {!editModeAuthor
+                ? <b onDoubleClick={() => setEditModeAuthor(true)}>{author.name}</b>
+            : <input
+                    autoFocus
+                    value={authorName}
+                    onChange={changeAuthorName}
+                    onBlur={updateAuthorName}/>}
             <br/>
-            {!editMode
-                ? <span onDoubleClick={() => setEditMode(true)}>{post.text}</span>
+            {!editModeComment
+                ? <span onDoubleClick={() => setEditModeComment(true)}>{post.text}</span>
                 : <textarea
-                    value={text}
-                    onChange={changeText}
-                    onBlur={onBlurHandle}/>}
+                    autoFocus
+                    value={commentText}
+                    onChange={changeCommentText}
+                    onBlur={updatePostText}/>}
             <br/>
             Likes: {post.likes}
             <hr/>
