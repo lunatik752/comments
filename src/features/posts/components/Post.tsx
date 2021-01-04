@@ -10,13 +10,13 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
     const post = useSelector((state: AppStateType) => state.posts.byId[postId])
     const author = useSelector((state: AppStateType) => state.authors.byId[post.authorId])
 
-    const [editModeComment, setEditModeComment] = useState(false)
+    const [editModePost, setEditModePost] = useState(false)
     const [editModeAuthor, setEditModeAuthor] = useState(false)
     const [commentText, setCommentText] = useState(post.text)
     const [authorName, setAuthorName] = useState(author.name)
     const dispatch = useDispatch()
 
-    const changeCommentText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    const changePostText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
         setCommentText(e.currentTarget.value)
     }, [])
 
@@ -26,7 +26,7 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
 
     const updatePostText = useCallback(() => {
         dispatch(updatePost(post.id, commentText))
-        setEditModeComment(false)
+        setEditModePost(false)
     }, [dispatch, post.id, commentText])
 
     const updateAuthorName = useCallback(() => {
@@ -44,12 +44,12 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
                     onChange={changeAuthorName}
                     onBlur={updateAuthorName}/>}
             <br/>
-            {!editModeComment
-                ? <span onDoubleClick={() => setEditModeComment(true)}>{post.text}</span>
+            {!editModePost
+                ? <span onDoubleClick={() => setEditModePost(true)}>{post.text}</span>
                 : <textarea
                     autoFocus
                     value={commentText}
-                    onChange={changeCommentText}
+                    onChange={changePostText}
                     onBlur={updatePostText}/>}
             <br/>
             Likes: {post.likes}
