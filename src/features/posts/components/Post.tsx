@@ -62,7 +62,7 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
             <hr/>
             Comments:
             <ul>
-                {post.commentsIds.map(id => <Comment key={id} id={id}/>)}
+                {post.commentsIds.map(id => <Comment key={id} commentId={id} postId={postId}/>)}
             </ul>
             <button onClick={showAllComments}>Show all comments</button>
             <hr/>

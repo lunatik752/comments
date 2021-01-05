@@ -28,7 +28,8 @@ export const commentsReducer = (state = initialState, action: ActionsType) => {
             }
         }
         case "FETCH_POST_COMMENTS_SUCCESS": {
-            const lookupTable = mapToLookupTable(action.payload.comments.map(c => {
+            const lookupTable = mapToLookupTable(action.payload.comments
+                .map(c => {
                     const comment: CommentType = {
                         id: c.id,
                         authorId: c.author.id,
@@ -45,6 +46,16 @@ export const commentsReducer = (state = initialState, action: ActionsType) => {
                 }
             }
         }
+        case "DELETE_COMMENT_SUCCESS": {
+            const byIdCopy = {
+                ...state.byId
+            }
+            delete byIdCopy[action.payload.commentId]
+            return {
+                ...state,
+                byId: byIdCopy
+            }
+        }
     }
     return state
 }
@@ -52,15 +63,25 @@ export const commentsReducer = (state = initialState, action: ActionsType) => {
 type ActionsType =
     | ReturnType<typeof fetchPostSuccess>
     | ReturnType<typeof fetchPostCommentsSuccess>
+    | ReturnType<typeof deleteCommentSuccess>
 
 export const fetchPostCommentsSuccess = (postId: number, comments: CommentApiType[]) => ({
     type: 'FETCH_POST_COMMENTS_SUCCESS',
     payload: {comments, postId}
 } as const)
 
+export const deleteCommentSuccess = (postId: number, commentId: number) => ({
+    type: 'DELETE_COMMENT_SUCCESS',
+    payload: {postId, commentId}
+} as const)
 
 export const fetchPostComments = (postId: number) => async (dispatch: Dispatch) => {
     const comments = await api.getCommentsForPost(postId)
     dispatch(fetchPostCommentsSuccess(postId, comments))
+}
+
+export const deleteComment = (postId: number, commentId: number) => async (dispatch: Dispatch) => {
+    const res = await api.deleteComment(postId, commentId)
+    dispatch(deleteCommentSuccess(postId, commentId))
 }
 

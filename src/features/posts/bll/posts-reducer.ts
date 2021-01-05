@@ -1,6 +1,6 @@
 import {api, PostApiType} from "../../../api/api";
 import {Dispatch} from "redux";
-import {fetchPostCommentsSuccess} from "./comments-reducer";
+import {deleteCommentSuccess, fetchPostCommentsSuccess} from "./comments-reducer";
 
 export type PostType = {
     id: number
@@ -66,6 +66,19 @@ export const postReducer = (state = initialState, action: PostReducerActionsType
                 },
             }
         }
+        case "DELETE_COMMENT_SUCCESS": {
+            const post = state.byId[action.payload.postId];
+            return {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    [action.payload.postId]: {
+                        ...post,
+                        commentsIds: post.commentsIds.filter(id => id !== action.payload.commentId)
+                    }
+                }
+            }
+        }
     }
     return state
 }
@@ -74,6 +87,8 @@ type PostReducerActionsType =
     | ReturnType<typeof fetchPostSuccess>
     | ReturnType<typeof updatePostSuccess>
     | ReturnType<typeof fetchPostCommentsSuccess>
+    | ReturnType<typeof deleteCommentSuccess>
+
 
 export const updatePostSuccess = (postId: number, text: string) => ({
     type: 'UPDATE_POST_SUCCESS',
