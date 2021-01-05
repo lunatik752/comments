@@ -9,7 +9,7 @@ const initialState = {
 
 type StateType = typeof initialState
 
-export const authorReducer = (state = initialState, action: PostReducerActionsType): StateType => {
+export const authorReducer = (state = initialState, action: ActionsTypes): StateType => {
     switch (action.type) {
         case "FETCH_POST_SUCCESS": {
             return {
@@ -30,7 +30,7 @@ export const authorReducer = (state = initialState, action: PostReducerActionsTy
     return state
 }
 
-type PostReducerActionsType = ReturnType<typeof fetchPostSuccess> | ReturnType<typeof updateAuthorSuccess>
+type ActionsTypes = ReturnType<typeof fetchPostSuccess> | ReturnType<typeof updateAuthorSuccess>
 
 export const updateAuthorSuccess = (authorID: number, authorName: string) => ({
     type: 'UPDATE_AUTHOR_SUCCESS',
