@@ -1,24 +1,26 @@
 import {api, PostApiType} from "../../../api/api";
 import {Dispatch} from "redux";
+import {fetchPostCommentsSuccess} from "./comments-reducer";
 
-export type PostType ={
+export type PostType = {
     id: number
     text: string
     likes: number
     authorId: number
+    commentsIds: number[]
 }
 
 const initialState = {
     // items: [] as PostType[],
     allIds: [] as number[],
-    byId: {} as {[key: string]: PostType}
+    byId: {} as { [key: string]: PostType }
 }
 
 type LookupTableType<T> = {
     [key: string]: T
 }
 
-export const mapToLookupTable = <T extends {id: number}>(items: T[]): LookupTableType<T> => {
+export const mapToLookupTable = <T extends { id: number }>(items: T[]): LookupTableType<T> => {
     const acc: LookupTableType<T> = {}
     return items.reduce((acc, item) => {
         acc[item.id] = item
@@ -31,20 +33,28 @@ export const postReducer = (state = initialState, action: PostReducerActionsType
         case "FETCH_POST_SUCCESS": {
             return {
                 ...state,
-                // items: action.payload.posts,
                 allIds: action.payload.posts.map(p => p.id),
                 byId: mapToLookupTable(action.payload.posts.map(p => {
                     const copy: PostType = {
                         id: p.id,
                         text: p.text,
                         likes: p.likes,
-                        authorId: p.author.id
+                        authorId: p.author.id,
+                        commentsIds: p.lastComments.map(c => c.id)
                     }
-
                     return copy
                 }))
-
-
+            }
+        }
+        case "FETCH_POST_COMMENTS_SUCCESS": {
+            return {
+                ...state, byId: {
+                    ...state.byId,
+                    [action.payload.postId]: {
+                        ...state.byId[action.payload.postId],
+                        commentsIds: action.payload.comments.map(c => c.id)
+                    }
+                }
             }
         }
         case "UPDATE_POST_SUCCESS": {
@@ -54,7 +64,6 @@ export const postReducer = (state = initialState, action: PostReducerActionsType
                     ...state.byId,
                     [action.payload.postId]: {...state.byId[action.payload.postId], text: action.payload.text}
                 },
-                // items: state.items.map(i => i.id === action.payload.postId ? {...i, text: action.payload.text} : i)
             }
         }
     }
@@ -64,6 +73,7 @@ export const postReducer = (state = initialState, action: PostReducerActionsType
 type PostReducerActionsType =
     | ReturnType<typeof fetchPostSuccess>
     | ReturnType<typeof updatePostSuccess>
+    | ReturnType<typeof fetchPostCommentsSuccess>
 
 export const updatePostSuccess = (postId: number, text: string) => ({
     type: 'UPDATE_POST_SUCCESS',

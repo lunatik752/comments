@@ -13,14 +13,18 @@ export const commentsReducer = (state = initialState, action: ActionsType) => {
         case "FETCH_POST_SUCCESS": {
             return {
                 ...state,
-                byId: mapToLookupTable(action.payload.posts.map(p => p.lastComments).flat().map(c => {
-                    const comment: CommentType = {
-                        id: c.id,
-                        authorId: c.author.id,
-                        text: c.text
-                    }
-                    return comment
-                }))
+                byId: {
+                    ...state.byId,
+                    ...mapToLookupTable(action.payload.posts.map(p => p.lastComments).flat().map(c => {
+                            const comment: CommentType = {
+                                id: c.id,
+                                authorId: c.author.id,
+                                text: c.text
+                            }
+                            return comment
+                        })
+                    )
+                }
             }
         }
         case "FETCH_POST_COMMENTS_SUCCESS": {
@@ -49,14 +53,14 @@ type ActionsType =
     | ReturnType<typeof fetchPostSuccess>
     | ReturnType<typeof fetchPostCommentsSuccess>
 
-export const fetchPostCommentsSuccess = (comments: CommentApiType[]) => ({
+export const fetchPostCommentsSuccess = (postId: number, comments: CommentApiType[]) => ({
     type: 'FETCH_POST_COMMENTS_SUCCESS',
-    payload: {comments}
+    payload: {comments, postId}
 } as const)
 
 
 export const fetchPostComments = (postId: number) => async (dispatch: Dispatch) => {
     const comments = await api.getCommentsForPost(postId)
-    dispatch(fetchPostCommentsSuccess(comments))
+    dispatch(fetchPostCommentsSuccess(postId, comments))
 }
 
