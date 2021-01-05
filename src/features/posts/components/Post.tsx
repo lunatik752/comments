@@ -2,7 +2,8 @@ import React, {ChangeEvent, useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {updatePost} from "../bll/posts-reducer";
 import {AppStateType} from "../../../state/store";
-import { updateAuthor } from '../bll/authors-reducer';
+import {updateAuthor} from '../bll/authors-reducer';
+import {Comment} from "./Comment";
 
 
 export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
@@ -38,7 +39,7 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
         <div>
             {!editModeAuthor
                 ? <b onDoubleClick={() => setEditModeAuthor(true)}>{author.name}</b>
-            : <input
+                : <input
                     autoFocus
                     value={authorName}
                     onChange={changeAuthorName}
@@ -54,7 +55,13 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
             <br/>
             Likes: {post.likes}
             <hr/>
+            Comments:
+            <ul>
+                {post.commentsIds.map(id => <Comment key={id} id={id}/>)}
+            </ul>
+            <hr/>
         </div>
     );
 })
+
 
