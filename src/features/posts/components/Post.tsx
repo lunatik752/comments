@@ -4,6 +4,7 @@ import {updatePost} from "../bll/posts-reducer";
 import {AppStateType} from "../../../state/store";
 import {updateAuthor} from '../bll/authors-reducer';
 import {Comment} from "./Comment";
+import {fetchPostComments} from "../bll/comments-reducer";
 
 
 export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
@@ -35,6 +36,10 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
         setEditModeAuthor(false)
     }, [dispatch, author.id, authorName])
 
+    const showAllComments = useCallback(() => {
+        dispatch(fetchPostComments(postId))
+    }, [dispatch, postId])
+
     return (
         <div>
             {!editModeAuthor
@@ -59,6 +64,7 @@ export const Post: React.FC<{ postId: number }> = React.memo(({postId}) => {
             <ul>
                 {post.commentsIds.map(id => <Comment key={id} id={id}/>)}
             </ul>
+            <button onClick={showAllComments}>Show all comments</button>
             <hr/>
         </div>
     );
